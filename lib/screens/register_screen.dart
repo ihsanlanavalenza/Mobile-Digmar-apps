@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_theme.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -70,9 +69,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(
             width: double.infinity,
             height: 120,
-            child: Image.asset(
-              'assets/images/Header Aplikasi.png',
-              fit: BoxFit.fill,
+            child: Stack(
+              children: [
+                Image.asset(
+                  'assets/images/Header Aplikasi.png',
+                  fit: BoxFit.fill,
+                ),
+                Positioned(
+                  left: 8,
+                  top: 50,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -232,16 +243,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
 
           // Footer SVG
-          Transform.translate(
-            offset: const Offset(0, 50),
-            child: SizedBox(
-              width: double.infinity,
-              height: 150,
-              child: Image.asset(
-                'assets/images/Buttom page.png',
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomCenter,
-              ),
+          SizedBox(
+            width: double.infinity,
+            height: 150,
+            child: Image.asset(
+              'assets/images/Buttom page.png',
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomCenter,
             ),
           ),
         ],

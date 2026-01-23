@@ -98,9 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
     }
 
-    if (screen != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => screen!));
-    }
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => screen!,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOutCubic;
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: FadeTransition(opacity: animation, child: child),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   @override
@@ -270,16 +289,13 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // Footer SVG
-          Transform.translate(
-            offset: const Offset(0, 50),
-            child: SizedBox(
-              width: double.infinity,
-              height: 150,
-              child: Image.asset(
-                'assets/images/Buttom page.png',
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomCenter,
-              ),
+          SizedBox(
+            width: double.infinity,
+            height: 150,
+            child: Image.asset(
+              'assets/images/Buttom page.png',
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomCenter,
             ),
           ),
         ],

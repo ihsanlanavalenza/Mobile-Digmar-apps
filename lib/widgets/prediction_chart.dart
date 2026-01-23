@@ -105,8 +105,8 @@ class PredictionChart extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            AppTheme.primaryColor.withOpacity(0.3),
-                            AppTheme.primaryColor.withOpacity(0.0),
+                            AppTheme.primaryGreen.withOpacity(0.3),
+                            AppTheme.primaryGreen.withOpacity(0.0),
                           ],
                         ),
                       ),

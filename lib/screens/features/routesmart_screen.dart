@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/app_theme.dart';
 
 class RouteSmartScreen extends StatefulWidget {
@@ -194,14 +193,11 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
           // Footer SVG
           SizedBox(
             width: double.infinity,
-            height: 100,
-            child: Transform.translate(
-              offset: const Offset(0, 50),
-              child: Image.asset(
-                'assets/images/Buttom page.png',
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomCenter,
-              ),
+            height: 120,
+            child: Image.asset(
+              'assets/images/Buttom page.png',
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomCenter,
             ),
           ),
         ],
