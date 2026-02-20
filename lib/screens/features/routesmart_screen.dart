@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_3d_button.dart';
 
 class RouteSmartScreen extends StatefulWidget {
   const RouteSmartScreen({super.key});
@@ -9,37 +10,11 @@ class RouteSmartScreen extends StatefulWidget {
 }
 
 class _RouteSmartScreenState extends State<RouteSmartScreen> {
-  final _fromController = TextEditingController();
-  final _toController = TextEditingController();
-
-  final List<Map<String, dynamic>> routeOptions = [
-    {
-      'name': 'Rute Tercepat',
-      'distance': '12.5 km',
-      'time': '25 menit',
-      'cost': 'Rp 15.000',
-      'icon': Icons.directions_car,
-    },
-    {
-      'name': 'Rute Terdekat',
-      'distance': '10.2 km',
-      'time': '30 menit',
-      'cost': 'Rp 12.000',
-      'icon': Icons.route,
-    },
-    {
-      'name': 'Rute Hemat',
-      'distance': '11.8 km',
-      'time': '28 menit',
-      'cost': 'Rp 10.000',
-      'icon': Icons.savings_outlined,
-    },
-  ];
+  final _searchController = TextEditingController(text: 'SD Negeri 1 Cendana');
 
   @override
   void dispose() {
-    _fromController.dispose();
-    _toController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -49,155 +24,254 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header SVG
+          // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/Header Aplikasi.png',
-                  fit: BoxFit.fill,
-                ),
-                Positioned(
-                  left: 8,
-                  top: 50,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Header Aplikasi.png',
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'RouteSmart',
-                      style: AppTheme.heading1.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Rute Pintar Distribusi',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
 
-                    // Route Input Card
-                    Container(
-                      padding: const EdgeInsets.all(16),
+                  // Title
+                  Text(
+                    'ROUTE SMART',
+                    style: AppTheme.heading2.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.shade100,
-                            blurRadius: 4,
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                      child: Column(
-                        children: [
-                          // From Field
-                          TextField(
-                            controller: _fromController,
-                            decoration: InputDecoration(
-                              labelText: 'Dari',
-                              hintText: 'Lokasi awal',
-                              prefixIcon: Icon(
-                                Icons.location_on,
-                                color: AppTheme.primaryGreen,
-                              ),
-                            ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade600,
                           ),
-                          const SizedBox(height: 16),
-
-                          // To Field
-                          TextField(
-                            controller: _toController,
-                            decoration: InputDecoration(
-                              labelText: 'Ke',
-                              hintText: 'Tujuan',
-                              prefixIcon: Icon(
-                                Icons.flag,
-                                color: AppTheme.primaryGreen,
-                              ),
-                            ),
+                          suffixIcon: Icon(
+                            Icons.close,
+                            color: Colors.grey.shade400,
                           ),
-                          const SizedBox(height: 16),
-
-                          // Search Route Button
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Mencari rute terbaik...'),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.search),
-                              label: const Text('Cari Rute'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primaryGreen,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                              ),
-                            ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
                           ),
-                        ],
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
                       ),
                     ),
+                  ),
 
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                    // Route Options
-                    Text(
-                      'Pilihan Rute',
-                      style: AppTheme.heading2.copyWith(
+                  // Truck Illustration
+                  Image.asset(
+                    'assets/images/assets-pageapps/ROUTE SMART.png',
+                    height: 120,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => SizedBox(
+                      height: 120,
+                      child: Icon(
+                        Icons.local_shipping,
+                        size: 80,
                         color: AppTheme.primaryGreen,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
 
-                    ...routeOptions.map(
-                      (route) => _buildRouteCard(
-                        route['name'],
-                        route['distance'],
-                        route['time'],
-                        route['cost'],
-                        route['icon'],
+                  const SizedBox(height: 20),
+
+                  // Action Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        _buildActionButton('Lihat Jadwal Hari ini'),
+                        const SizedBox(height: 12),
+                        _buildActionButton('Rute Jarak'),
+                        const SizedBox(height: 12),
+                        _buildActionButton('Atur Rute Pengiriman'),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Resume Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Resume',
+                          style: AppTheme.heading3.copyWith(
+                            color: AppTheme.textPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildResumeItem(
+                              Icons.calendar_today,
+                              'Jadwal Pengiriman',
+                              'Pukul 09.00',
+                            ),
+                            _buildResumeItem(
+                              Icons.location_on,
+                              'Route Jarak',
+                              '20 Km',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Mitra MBG 1',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                  Text(
+                                    'Jenis Komoditas',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                  Text(
+                                    'Kapasitas Pesanan',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'SD Negeri 01 Cendana',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Semangka',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    '10000 Kg',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // Navigation Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Kembali Keberanda',
+                            onTap: () => Navigator.pop(context),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Lihat Transaksi',
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Lihat Rute Terdekat Button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Custom3DButton(
+                        label: 'Lihat Rute Terdekat',
+                        onTap: () {},
+                        width: double.infinity,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -205,115 +279,24 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
     );
   }
 
-  Widget _buildRouteCard(
-    String name,
-    String distance,
-    String time,
-    String cost,
-    IconData icon,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Menggunakan $name...')));
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, color: AppTheme.primaryGreen, size: 28),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: AppTheme.bodyLarge.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.straighten,
-                            size: 14,
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            distance,
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondaryColor,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Icon(
-                            Icons.access_time,
-                            size: 14,
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            time,
-                            style: AppTheme.bodySmall.copyWith(
-                              color: AppTheme.textSecondaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      cost,
-                      style: AppTheme.bodyLarge.copyWith(
-                        color: AppTheme.primaryGreen,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: AppTheme.primaryGreen,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+  Widget _buildActionButton(String label) {
+    return SizedBox(
+      width: double.infinity,
+      child: Custom3DButton(label: label, onTap: () {}, width: double.infinity),
+    );
+  }
+
+  Widget _buildResumeItem(IconData icon, String label, String value) {
+    return Column(
+      children: [
+        Icon(icon, color: AppTheme.primaryGreen, size: 28),
+        const SizedBox(height: 4),
+        Text(label, style: AppTheme.bodySmall),
+        Text(
+          value,
+          style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.bold),
         ),
-      ),
+      ],
     );
   }
 }

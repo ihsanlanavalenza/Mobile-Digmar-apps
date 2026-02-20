@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern Learning/Book Icon -->
+  <path d="M8 14 C8 14 18 10 32 14 C46 10 56 14 56 14 L56 50 C56 50 46 46 32 50 C18 46 8 50 8 50 Z" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linejoin="round"/>
+  <path d="M32 14 L32 50" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="22" cy="28" r="4" fill="#FFFFFF" opacity="0.8"/>
+  <path d="M22 28 L22 24" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M18 36 L26 36" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M16 42 L28 42" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 30 L48 30" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 36 L50 36" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <path d="M38 42 L46 42" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+</svg>

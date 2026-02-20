@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_3d_button.dart';
 import 'features/agrimap_screen.dart';
 import 'features/digimarket_screen.dart';
 import 'features/routesmart_screen.dart';
@@ -26,48 +27,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final List<Map<String, dynamic>> features = [
-    {
-      'name': 'AgriMap',
-      'icon': 'assets/images/icon fitur /Agrimap.svg',
-      'subtitle': 'Peta Pertanian',
-    },
-    {
-      'name': 'DigiMarket',
-      'icon': 'assets/images/icon fitur /Digimarket.svg',
-      'subtitle': 'Pasar Digital',
-    },
-    {
-      'name': 'RouteSmart',
-      'icon': 'assets/images/icon fitur /RouteSmart.svg',
-      'subtitle': 'Rute Pintar',
-    },
-    {
-      'name': 'AgriPredicy',
-      'icon': 'assets/images/icon fitur /AgriPredicy.svg',
-      'subtitle': 'Prediksi Panen',
-    },
-    {
-      'name': 'FoodDash',
-      'icon': 'assets/images/icon fitur /FoodDash.svg',
-      'subtitle': 'Dashboard Pangan',
-    },
-    {
-      'name': 'TraceID',
-      'icon': 'assets/images/icon fitur /TraceID.svg',
-      'subtitle': 'Lacak Produk',
-    },
-    {
-      'name': 'AgriLearn',
-      'icon': 'assets/images/icon fitur /AgriLearn.svg',
-      'subtitle': 'Belajar Pertanian',
-    },
+    {'name': 'Agrimap', 'icon': 'assets/images/Menu icon/Agrimap.png'},
+    {'name': 'DigiMarket', 'icon': 'assets/images/Menu icon/Digimarket.png'},
+    {'name': 'RouteSmart', 'icon': 'assets/images/Menu icon/RouteSmart.png'},
+    {'name': 'AgriPredicy', 'icon': 'assets/images/Menu icon/AgriPredicy.png'},
+    {'name': 'FoodDash', 'icon': 'assets/images/Menu icon/FoodDash.png'},
+    {'name': 'TraceID', 'icon': 'assets/images/Menu icon/TraceID.png'},
+    {'name': 'AgriLearn', 'icon': 'assets/images/Menu icon/AgriLearn.png'},
   ];
 
   void _onFeatureTap(String featureName) {
     Widget? screen;
 
     switch (featureName) {
-      case 'AgriMap':
+      case 'Agrimap':
         screen = const AgriMapScreen();
         break;
       case 'DigiMarket':
@@ -131,101 +104,82 @@ class _HomeScreenState extends State<HomeScreen> {
           // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Header Aplikasi.png',
-              fit: BoxFit.fill,
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Welcome Text
-                    Text(
-                      'Selamat Datang di',
-                      style: AppTheme.bodyLarge.copyWith(
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'DIGMAR',
-                      style: AppTheme.heading1.copyWith(
-                        fontSize: 32,
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
                     // Search Bar
-                    TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Cari fitur...',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide(color: AppTheme.primaryGreen),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    // Features Grid Title
-                    Text(
-                      'Fitur Utama',
-                      style: AppTheme.heading2.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Features Grid (3 columns)
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.85,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                      itemCount: features.length,
-                      itemBuilder: (context, index) {
-                        final feature = features[index];
-                        return _buildFeatureCard(
-                          feature['name'],
-                          feature['icon'],
-                          feature['subtitle'],
-                        );
-                      },
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Cari fitur...',
+                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade600,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
+                      ),
                     ),
 
                     const SizedBox(height: 24),
 
+                    // Features Grid (3 columns x 2 rows + 1)
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      alignment: WrapAlignment.center,
+                      children: features.map((feature) {
+                        return _buildFeatureCard(
+                          feature['name'],
+                          feature['icon'],
+                        );
+                      }).toList(),
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // Show More Button
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: () {
+                    SizedBox(
+                      width: double.infinity,
+                      child: Custom3DButton(
+                        label: 'Show More',
+                        onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
@@ -234,50 +188,43 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.expand_more),
-                        label: const Text('Lihat Lebih Banyak'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppTheme.primaryGreen,
-                        ),
+                        width: double.infinity,
                       ),
                     ),
 
                     const SizedBox(height: 24),
 
-                    // Banner
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.primaryGreen, AppTheme.lightGreen],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
+                    // Banner Text
+                    Text(
+                      'Satu Bibit Untuk Satu Kehidupan',
+                      style: AppTheme.heading3.copyWith(
+                        color: AppTheme.primaryGreen,
+                        fontStyle: FontStyle.italic,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Satu Bibit',
-                                  style: AppTheme.heading2.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Untuk Satu Kehidupan',
-                                  style: AppTheme.bodyLarge.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Hand holding plant SVG
+                    SvgPicture.asset(
+                      'assets/images/svg/banner_bibit.svg',
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      placeholderBuilder: (context) => Container(
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.eco,
+                            size: 48,
+                            color: AppTheme.primaryGreen,
                           ),
-                          const Icon(Icons.eco, size: 48, color: Colors.white),
-                        ],
+                        ),
                       ),
                     ),
 
@@ -288,14 +235,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 150,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -303,63 +254,119 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeatureCard(String name, String iconPath, String subtitle) {
-    return InkWell(
+  Widget _buildFeatureCard(String name, String iconPath) {
+    return GestureDetector(
       onTap: () => _onFeatureTap(name),
-      borderRadius: BorderRadius.circular(16),
       child: Container(
+        width: 105,
+        height: 105,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: [
+            // Outer shadow (bottom depth)
             BoxShadow(
-              color: Colors.grey.shade100,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: AppTheme.primaryGreen.withValues(alpha: 0.4),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+            // Mid shadow
+            BoxShadow(
+              color: AppTheme.primaryGreen.withValues(alpha: 0.2),
+              blurRadius: 18,
+              offset: const Offset(0, 7),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon
-            Container(
-              height: 50,
-              width: 50,
-              padding: const EdgeInsets.all(8),
-              child: SvgPicture.asset(
-                iconPath,
-                fit: BoxFit.contain,
-                allowDrawingOutsideViewBox: false,
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppTheme.primaryGreen.withValues(alpha: 0.9),
+                AppTheme.primaryGreen,
+              ],
             ),
-            const SizedBox(height: 8),
-            // Name
-            Text(
-              name,
-              style: AppTheme.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppTheme.primaryGreen,
-              ),
-              textAlign: TextAlign.center,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: 1.5,
             ),
-            const SizedBox(height: 2),
-            // Subtitle
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                subtitle,
-                style: AppTheme.bodySmall.copyWith(
-                  color: AppTheme.textSecondaryColor,
-                  fontSize: 10,
+          ),
+          child: Stack(
+            children: [
+              // Inner highlight (top-left shine)
+              Positioned(
+                top: 6,
+                left: 6,
+                right: 35,
+                child: Container(
+                  height: 25,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.25),
+                        Colors.transparent,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+              // Content
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Icon Container
+                  Center(
+                    child: SizedBox(
+                      height: 68,
+                      width: 68,
+                      child: Image.asset(
+                        iconPath,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.eco,
+                              color: Colors.white,
+                              size: 45,
+                            ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  // Name
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              offset: Offset(0, 1),
+                              blurRadius: 2,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

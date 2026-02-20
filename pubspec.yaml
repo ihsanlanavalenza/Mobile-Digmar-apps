@@ -2,7 +2,7 @@ name: digmarapps
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -34,34 +34,37 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  
+
   # Charts - Powerful & beautiful charts
   fl_chart: ^0.69.2
-  
+
   # Maps
   google_maps_flutter: ^2.9.0
-  
+
   # Navigation
   go_router: ^14.6.2
-  
+
   # HTTP & API calls
   http: ^1.2.2
   dio: ^5.7.0
-  
+
   # State Management
   provider: ^6.1.2
-  
+
   # UI Utilities
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
   cached_network_image: ^3.4.1
-  
+
   # Utilities
   intl: ^0.19.0
   shared_preferences: ^2.3.3
-  
+
   # Icons
   flutter_animate: ^4.5.0
+  url_launcher: ^6.3.2
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -87,7 +90,6 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -97,6 +99,10 @@ flutter:
   assets:
     - assets/images/
     - assets/images/icon fitur /
+    - assets/images/assets-pageapps/
+    - assets/images/Menu icon/
+    - assets/images/svg/
+    - assets/images/svg/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

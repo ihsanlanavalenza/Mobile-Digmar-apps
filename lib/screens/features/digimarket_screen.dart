@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_3d_button.dart';
+import '../../services/dummy_data_service.dart';
+import '../../models/commodity.dart';
 
 class DigiMarketScreen extends StatefulWidget {
   const DigiMarketScreen({super.key});
@@ -9,49 +12,19 @@ class DigiMarketScreen extends StatefulWidget {
 }
 
 class _DigiMarketScreenState extends State<DigiMarketScreen> {
-  String selectedCategory = 'Semua';
-  final List<String> categories = [
-    'Semua',
-    'Beras',
-    'Sayuran',
-    'Buah',
-    'Rempah',
-  ];
+  final _searchController = TextEditingController();
+  String _selectedCommodityId = DummyDataService.commodities.first.id;
 
-  final List<Map<String, dynamic>> products = [
-    {
-      'name': 'Beras Premium',
-      'price': 'Rp 12.000/kg',
-      'seller': 'Tani Sejahtera',
-      'stock': 500,
-      'rating': 4.8,
-      'category': 'Beras',
-    },
-    {
-      'name': 'Cabai Merah',
-      'price': 'Rp 45.000/kg',
-      'seller': 'Berkah Farm',
-      'stock': 150,
-      'rating': 4.5,
-      'category': 'Sayuran',
-    },
-    {
-      'name': 'Tomat Segar',
-      'price': 'Rp 8.000/kg',
-      'seller': 'Mitra Tani',
-      'stock': 300,
-      'rating': 4.7,
-      'category': 'Sayuran',
-    },
-    {
-      'name': 'Jeruk Manis',
-      'price': 'Rp 15.000/kg',
-      'seller': 'Buah Nusantara',
-      'stock': 200,
-      'rating': 4.9,
-      'category': 'Buah',
-    },
-  ];
+  Commodity get _selectedCommodity => DummyDataService.commodities.firstWhere(
+    (c) => c.id == _selectedCommodityId,
+    orElse: () => DummyDataService.commodities.first,
+  );
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,132 +32,253 @@ class _DigiMarketScreenState extends State<DigiMarketScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header SVG
+          // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/Header Aplikasi.png',
-                  fit: BoxFit.fill,
-                ),
-                Positioned(
-                  left: 8,
-                  top: 50,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Header Aplikasi.png',
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'DigiMarket',
-                        style: AppTheme.heading1.copyWith(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+
+                  // Title
+                  Text(
+                    'DIGIMARKET ROOM',
+                    style: AppTheme.heading2.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Text(
+                    'Pilih Komoditas:',
+                    style: AppTheme.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: _selectedCommodityId,
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
                           color: AppTheme.primaryGreen,
                         ),
+                        items: DummyDataService.commodities.map((c) {
+                          return DropdownMenuItem<String>(
+                            value: c.id,
+                            child: Text(
+                              c.name,
+                              style: AppTheme.bodyLarge.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedCommodityId = newValue;
+                              _searchController.text = _selectedCommodity.name;
+                            });
+                          }
+                        },
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Pasar Digital Pertanian',
-                        style: AppTheme.bodyMedium.copyWith(
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                    ),
+                  ),
 
-                      // Search Bar
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Cari produk...',
-                          prefixIcon: const Icon(Icons.search),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.shopping_cart_outlined),
-                            onPressed: () {},
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-                      // Category Chips
-                      SizedBox(
-                        height: 40,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: categories.length,
-                          itemBuilder: (context, index) {
-                            final category = categories[index];
-                            final isSelected = category == selectedCategory;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: ChoiceChip(
-                                label: Text(category),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    selectedCategory = category;
-                                  });
-                                },
-                                selectedColor: AppTheme.primaryGreen,
-                                labelStyle: TextStyle(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : AppTheme.primaryGreen,
-                                  fontWeight: FontWeight.w600,
+                  // Product Display
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Commodity Image/Icon
+                        _selectedCommodity.imagePath.isNotEmpty
+                            ? Image.asset(
+                                _selectedCommodity.imagePath,
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      height: 100,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        color: Colors.amber.shade100,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Icon(
+                                        _selectedCommodity.icon ?? Icons.grain,
+                                        size: 48,
+                                        color: AppTheme.primaryGreen,
+                                      ),
+                                    ),
+                              )
+                            : Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.shade100,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  _selectedCommodity.icon ?? Icons.grain,
+                                  size: 48,
+                                  color: AppTheme.primaryGreen,
                                 ),
                               ),
-                            );
-                          },
+                        const SizedBox(width: 20),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _selectedCommodity.name,
+                              style: AppTheme.heading3.copyWith(
+                                color: AppTheme.primaryGreen,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Rp ${_selectedCommodity.pricePerKg.toStringAsFixed(0)}/KG',
+                              style: AppTheme.bodyLarge.copyWith(
+                                color: AppTheme.primaryGreen,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                // Products Grid
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.75,
-                        ),
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return _buildProductCard(product);
-                    },
+                  const SizedBox(height: 24),
+
+                  // Action Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        _buildActionButton('Ajukan Penawaran'),
+                        const SizedBox(height: 12),
+                        _buildActionButton('Kontrak Panen'),
+                        const SizedBox(height: 12),
+                        _buildActionButton('Layanan Pembayaran'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 24),
+
+                  // Harga Pasar Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'HARGA PASAR',
+                          style: AppTheme.heading3.copyWith(
+                            color: AppTheme.textPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildPriceRow('Jawa', 'Rp 4.500 / Kg'),
+                        const SizedBox(height: 4),
+                        _buildPriceRow('Sumatera', 'Rp 5.200 / Kg'),
+                        const SizedBox(height: 4),
+                        _buildPriceRow('Kalimantan', 'Rp 6000 / Kg'),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Navigation Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Kembali Keberanda',
+                            onTap: () => Navigator.pop(context),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Lihat Transaksi',
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Penawaran diterima Button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Custom3DButton(
+                        label: 'Penawaran diterima',
+                        onTap: () {},
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -192,97 +286,23 @@ class _DigiMarketScreenState extends State<DigiMarketScreen> {
     );
   }
 
-  Widget _buildProductCard(Map<String, dynamic> product) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Product Image Placeholder
-          Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppTheme.primaryGreen.withOpacity(0.1),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.shopping_bag_outlined,
-                size: 48,
-                color: AppTheme.primaryGreen,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product['name'],
-                    style: AppTheme.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product['price'],
-                    style: AppTheme.bodyLarge.copyWith(
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.star, size: 14, color: Colors.amber),
-                      const SizedBox(width: 4),
-                      Text('${product['rating']}', style: AppTheme.bodySmall),
-                    ],
-                  ),
-                  const Spacer(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${product['name']} ditambahkan ke keranjang',
-                            ),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGreen,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                      ),
-                      child: const Text('Beli', style: TextStyle(fontSize: 12)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildActionButton(String label) {
+    return SizedBox(
+      width: double.infinity,
+      child: Custom3DButton(label: label, onTap: () {}, width: double.infinity),
+    );
+  }
+
+  Widget _buildPriceRow(String region, String price) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(region, style: AppTheme.bodyMedium),
+        Text(
+          price,
+          style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ],
     );
   }
 }

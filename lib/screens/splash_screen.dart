@@ -54,21 +54,23 @@ class _SplashScreenState extends State<SplashScreen>
                 const LoginScreen(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOutCubic;
-              var slideTween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var fadeTween = Tween<double>(begin: 0.0, end: 1.0);
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOutCubic;
+                  var slideTween = Tween(
+                    begin: begin,
+                    end: end,
+                  ).chain(CurveTween(curve: curve));
+                  var fadeTween = Tween<double>(begin: 0.0, end: 1.0);
 
-              return SlideTransition(
-                position: animation.drive(slideTween),
-                child: FadeTransition(
-                  opacity: animation.drive(fadeTween),
-                  child: child,
-                ),
-              );
-            },
+                  return SlideTransition(
+                    position: animation.drive(slideTween),
+                    child: FadeTransition(
+                      opacity: animation.drive(fadeTween),
+                      child: child,
+                    ),
+                  );
+                },
             transitionDuration: const Duration(milliseconds: 600),
           ),
         );
@@ -157,10 +159,10 @@ class _SplashScreenState extends State<SplashScreen>
                       vertical: 14,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryGreen.withOpacity(0.08),
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: AppTheme.primaryGreen.withOpacity(0.2),
+                        color: AppTheme.primaryGreen.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),

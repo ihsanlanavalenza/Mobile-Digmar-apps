@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_3d_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -203,15 +204,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
 
                   // Register Button
-                  ElevatedButton(
-                    onPressed: _handleRegister,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text('DAFTAR'),
+                  Custom3DButton(
+                    label: 'DAFTAR',
+                    onTap: _handleRegister,
+                    width: double.infinity,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Back Button
+                  Custom3DButton(
+                    label: 'KEMBALI',
+                    onTap: () => Navigator.pop(context),
+                    width: double.infinity,
+                    gradientColors: [
+                      Colors.grey.shade400,
+                      Colors.grey.shade600,
+                    ],
                   ),
 
                   const SizedBox(height: 20),
@@ -245,7 +257,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // Footer SVG
           SizedBox(
             width: double.infinity,
-            height: 150,
+            height: 80,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,

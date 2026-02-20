@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_3d_button.dart';
+import '../../services/dummy_data_service.dart';
+import '../../models/mitra_location.dart';
+import 'mitra_detail_screen.dart';
 
 class AgriMapScreen extends StatefulWidget {
   const AgriMapScreen({super.key});
@@ -9,26 +15,23 @@ class AgriMapScreen extends StatefulWidget {
 }
 
 class _AgriMapScreenState extends State<AgriMapScreen> {
-  final List<Map<String, dynamic>> suppliers = [
-    {
-      'name': 'SD Negeri 05 Kedungsari',
-      'location': 'Kedungasari',
-      'products': ['Beras', 'Sayur', 'Buah'],
-      'distance': '2.5 km',
-    },
-    {
-      'name': 'Koperasi Tani Maju',
-      'location': 'Kedungasari',
-      'products': ['Beras', 'Jagung'],
-      'distance': '3.2 km',
-    },
-    {
-      'name': 'Kelompok Tani Sejahtera',
-      'location': 'Kedungasari',
-      'products': ['Sayur', 'Buah', 'Rempah'],
-      'distance': '1.8 km',
-    },
-  ];
+  final _searchController = TextEditingController();
+  MitraLocation? _selectedMitra;
+
+  @override
+  void initState() {
+    super.initState();
+    if (DummyDataService.mitraLocations.isNotEmpty) {
+      _selectedMitra = DummyDataService.mitraLocations.first;
+      _searchController.text = _selectedMitra!.region;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,165 +39,301 @@ class _AgriMapScreenState extends State<AgriMapScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header SVG
+          // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/Header Aplikasi.png',
-                  fit: BoxFit.fill,
-                ),
-                Positioned(
-                  left: 8,
-                  top: 50,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Header Aplikasi.png',
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Map Placeholder
-                  Container(
-                    height: 250,
-                    width: double.infinity,
-                    margin: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300),
+                  const SizedBox(height: 8),
+
+                  // Title
+                  Text(
+                    'AGRIMAP ROOM',
+                    style: AppTheme.heading2.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
                     ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade600,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.close,
+                            color: Colors.grey.shade400,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Map
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      height: 250,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: _buildMap(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Info Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _selectedMitra?.name ?? 'Pilih Mitra',
+                            style: AppTheme.bodyLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _selectedMitra?.address ?? '-',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.textSecondaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Potensi Supplier: ${_selectedMitra?.commodities.join(", ") ?? "-"}',
+                            style: AppTheme.bodyMedium.copyWith(
+                              color: AppTheme.primaryGreen,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
                             children: [
-                              Icon(
-                                Icons.map,
-                                size: 64,
-                                color: AppTheme.primaryGreen,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Peta Kedungasari',
-                                style: AppTheme.heading2.copyWith(
-                                  color: AppTheme.primaryGreen,
+                              Expanded(
+                                child: Custom3DButton(
+                                  label: 'Lihat Lokasi',
+                                  onTap: () {},
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Area Mapping Supplier',
-                                style: AppTheme.bodyMedium.copyWith(
-                                  color: AppTheme.textSecondaryColor,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Custom3DButton(
+                                  label: 'Hubungi Mitra',
+                                  onTap: () {},
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.location_on,
-                                  size: 16,
-                                  color: AppTheme.primaryGreen,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Kedungasari',
-                                  style: AppTheme.bodySmall.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 
+                  const SizedBox(height: 16),
+
+                  // Ringkasan Wilayah
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text(
+                          'Ringkasan Wilayah',
+                          style: AppTheme.heading3.copyWith(
+                            color: AppTheme.primaryGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Daftar Supplier',
-                              style: AppTheme.heading2.copyWith(
-                                color: AppTheme.primaryGreen,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Total Mitra MBG di Wilayah ini',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                  Text(
+                                    'Desa dengan mitra terbanyak',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                  Text(
+                                    'Potensi Pasar Utama',
+                                    style: AppTheme.bodySmall,
+                                  ),
+                                ],
                               ),
                             ),
-                            TextButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.filter_list, size: 18),
-                              label: const Text('Filter'),
-                              style: TextButton.styleFrom(
-                                foregroundColor: AppTheme.primaryGreen,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '12',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Desa Sumedang',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Beras',
+                                    style: AppTheme.bodySmall.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        // Supplier Cards
-                        ...suppliers.map(
-                          (supplier) => _buildSupplierCard(
-                            supplier['name'],
-                            supplier['location'],
-                            supplier['products'],
-                            supplier['distance'],
-                          ),
                         ),
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 20),
+
+                  // Navigation Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Kembali Keberanda',
+                            onTap: () => Navigator.pop(context),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Lihat Marketplace',
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Informasi Mitra Button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Custom3DButton(
+                        label: 'Informasi Mitra',
+                        onTap: () {
+                          if (_selectedMitra != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MitraDetailScreen(mitra: _selectedMitra!),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Pilih Mitra Terlebih Dahulu'),
+                              ),
+                            );
+                          }
+                        },
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -202,161 +341,73 @@ class _AgriMapScreenState extends State<AgriMapScreen> {
     );
   }
 
-  Widget _buildSupplierCard(
-    String name,
-    String location,
-    List<String> products,
-    String distance,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.store,
-                  color: AppTheme.primaryGreen,
-                  size: 24,
-                ),
+  Widget _buildMap() {
+    final center = _selectedMitra != null
+        ? LatLng(_selectedMitra!.latitude, _selectedMitra!.longitude)
+        : const LatLng(-6.8384, 107.9253);
+
+    return FlutterMap(
+      options: MapOptions(initialCenter: center, initialZoom: 8.0),
+      children: [
+        TileLayer(
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          userAgentPackageName: 'com.example.digmarapps',
+        ),
+        MarkerLayer(
+          markers: DummyDataService.mitraLocations.map((mitra) {
+            final isSelected = _selectedMitra?.id == mitra.id;
+            return Marker(
+              point: LatLng(mitra.latitude, mitra.longitude),
+              width: 100,
+              height: 60,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedMitra = mitra;
+                    _searchController.text = mitra.region;
+                  });
+                },
+                child: _buildMarker(mitra.name, isSelected),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: AppTheme.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 14,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          location,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Icon(
-                          Icons.navigation_outlined,
-                          size: 14,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          distance,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMarker(String label, bool isSelected) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primaryGreen : Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 2,
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            'Potensi Supplier:',
-            style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textSecondaryColor,
-              fontWeight: FontWeight.w600,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : Colors.black87,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: products.map((product) {
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentGreen.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  product,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.primaryGreen,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Membuka lokasi $name...')),
-                    );
-                  },
-                  icon: const Icon(Icons.map_outlined, size: 18),
-                  label: const Text('Lihat Lokasi'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primaryGreen,
-                    side: BorderSide(color: AppTheme.primaryGreen),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Menghubungi $name...')),
-                    );
-                  },
-                  icon: const Icon(Icons.phone, size: 18),
-                  label: const Text('Hubungi'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryGreen,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        Icon(
+          Icons.location_on,
+          color: isSelected ? Colors.red : AppTheme.primaryGreen,
+          size: isSelected ? 32 : 24,
+        ),
+      ],
     );
   }
 }

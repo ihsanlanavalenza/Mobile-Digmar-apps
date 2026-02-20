@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern Trace/QR Code Icon -->
+  <rect x="10" y="10" width="16" height="16" rx="2" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+  <rect x="38" y="10" width="16" height="16" rx="2" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+  <rect x="10" y="38" width="16" height="16" rx="2" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+  <rect x="15" y="15" width="6" height="6" rx="1" fill="#FFFFFF"/>
+  <rect x="43" y="15" width="6" height="6" rx="1" fill="#FFFFFF"/>
+  <rect x="15" y="43" width="6" height="6" rx="1" fill="#FFFFFF"/>
+  <path d="M38 38 L54 38" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M38 46 L46 46" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M38 54 L54 54" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="52" cy="46" r="3" fill="#FFFFFF"/>
+</svg>

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_3d_button.dart';
 
 class TraceIDScreen extends StatefulWidget {
   const TraceIDScreen({super.key});
@@ -9,46 +10,13 @@ class TraceIDScreen extends StatefulWidget {
 }
 
 class _TraceIDScreenState extends State<TraceIDScreen> {
-  final TextEditingController _traceIdController = TextEditingController();
-  bool _isTracking = false;
+  final _searchController = TextEditingController(text: 'Pilih Komoditas');
 
-  final List<Map<String, dynamic>> _trackingHistory = [
-    {
-      'stage': 'Penanaman',
-      'location': 'Lahan Petani A, Kedungsari',
-      'date': '15 Jan 2024',
-      'status': 'Selesai',
-      'icon': Icons.agriculture,
-    },
-    {
-      'stage': 'Pemanenan',
-      'location': 'Lahan Petani A, Kedungsari',
-      'date': '20 Mar 2024',
-      'status': 'Selesai',
-      'icon': Icons.shopping_basket,
-    },
-    {
-      'stage': 'Pengolahan',
-      'location': 'Penggilingan Padi Jaya',
-      'date': '22 Mar 2024',
-      'status': 'Selesai',
-      'icon': Icons.factory,
-    },
-    {
-      'stage': 'Pengemasan',
-      'location': 'Gudang Distribusi Utama',
-      'date': '25 Mar 2024',
-      'status': 'Selesai',
-      'icon': Icons.inventory_2,
-    },
-    {
-      'stage': 'Distribusi',
-      'location': 'Toko Tani Makmur',
-      'date': '27 Mar 2024',
-      'status': 'Dalam Proses',
-      'icon': Icons.local_shipping,
-    },
-  ];
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,252 +24,187 @@ class _TraceIDScreenState extends State<TraceIDScreen> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header SVG
+          // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/Header Aplikasi.png',
-                  fit: BoxFit.fill,
-                ),
-                Positioned(
-                  left: 8,
-                  top: 50,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Header Aplikasi.png',
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'TraceID',
-                      style: AppTheme.heading1.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Lacak Perjalanan Produk Pertanian',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
 
-                    // QR Code Scanner Placeholder
-                    Container(
-                      height: 200,
+                  // Title
+                  Text(
+                    'TRACE ID',
+                    style: AppTheme.heading2.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
                       decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen.withOpacity(0.05),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppTheme.primaryGreen.withOpacity(0.3),
-                          width: 2,
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.qr_code_scanner,
-                            size: 80,
-                            color: AppTheme.primaryGreen.withOpacity(0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Scan QR Code Produk',
-                            style: AppTheme.bodyMedium.copyWith(
-                              color: AppTheme.primaryGreen,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _isTracking = true;
-                                _traceIdController.text = 'TRACE-2024-001';
-                              });
-                            },
-                            icon: const Icon(Icons.camera_alt),
-                            label: const Text('Buka Kamera'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryGreen,
-                              foregroundColor: Colors.white,
-                            ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Manual Input
-                    Text(
-                      'atau Masukkan Kode Pelacakan',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade600,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey.shade600,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                  ),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _traceIdController,
-                            decoration: InputDecoration(
-                              hintText: 'Contoh: TRACE-2024-001',
-                              prefixIcon: const Icon(Icons.tag),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: AppTheme.primaryGreen,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_traceIdController.text.isNotEmpty) {
-                              setState(() {
-                                _isTracking = true;
-                              });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryGreen,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 16,
-                            ),
-                          ),
-                          child: const Text('Lacak'),
-                        ),
-                      ],
+                  const SizedBox(height: 20),
+
+                  // Hero Image - Farmer
+                  Container(
+                    height: 120,
+                    width: 160,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.grey.shade100,
                     ),
-
-                    if (_isTracking) ...[
-                      const SizedBox(height: 32),
-
-                      // Product Info
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppTheme.primaryGreen.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.rice_bowl,
-                                size: 32,
-                                color: AppTheme.primaryGreen,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Beras Premium',
-                                    style: AppTheme.heading2.copyWith(
-                                      color: AppTheme.primaryGreen,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Kode: ${_traceIdController.text}',
-                                    style: AppTheme.bodySmall.copyWith(
-                                      color: AppTheme.textSecondaryColor,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Produksi: Kedungsari, Jawa Timur',
-                                    style: AppTheme.bodySmall.copyWith(
-                                      color: AppTheme.textSecondaryColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Tracking Timeline
-                      Text(
-                        'Riwayat Pelacakan',
-                        style: AppTheme.heading2.copyWith(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        'assets/images/assets-pageapps/Tomat apel.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.person,
+                          size: 60,
                           color: AppTheme.primaryGreen,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                    ),
+                  ),
 
-                      ..._trackingHistory.asMap().entries.map((entry) {
-                        final index = entry.key;
-                        final item = entry.value;
-                        final isLast = index == _trackingHistory.length - 1;
-                        return _buildTrackingItem(
-                          item['stage'],
-                          item['location'],
-                          item['date'],
-                          item['status'],
-                          item['icon'],
-                          isLast,
-                        );
-                      }),
-                    ],
+                  const SizedBox(height: 24),
 
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                  // Flowchart
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        // Row 1: Petani -> Panen
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildFlowBox('PETANI', Icons.agriculture),
+                            _buildArrow(true),
+                            _buildFlowBox('PANEN', Icons.grass),
+                          ],
+                        ),
+
+                        // Down Arrow
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(width: 150),
+                              Icon(
+                                Icons.arrow_downward,
+                                color: AppTheme.primaryGreen,
+                                size: 30,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Row 2: Distribusi <- Penyimpanan
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildFlowBox('DISTRIBUSI', Icons.local_shipping),
+                            _buildArrow(false),
+                            _buildFlowBox('PENYIMPANAN', Icons.warehouse),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Navigation Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Kembali Keberanda',
+                            onTap: () => Navigator.pop(context),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Lihat Kebutuhan',
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -309,130 +212,25 @@ class _TraceIDScreenState extends State<TraceIDScreen> {
     );
   }
 
-  Widget _buildTrackingItem(
-    String stage,
-    String location,
-    String date,
-    String status,
-    IconData icon,
-    bool isLast,
-  ) {
-    final isCompleted = status == 'Selesai';
-    final color = isCompleted ? AppTheme.primaryGreen : Colors.orange;
-
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildFlowBox(String label, IconData icon) {
+    return Container(
+      width: 120,
+      height: 80,
+      decoration: BoxDecoration(
+        color: AppTheme.primaryGreen,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Column(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: color, width: 2),
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-              if (!isLast)
-                Expanded(
-                  child: Container(
-                    width: 2,
-                    color: color.withOpacity(0.3),
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade100,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          stage,
-                          style: AppTheme.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          status,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 14,
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          location,
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        size: 14,
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        date,
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          Icon(icon, color: Colors.white, size: 28),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
@@ -440,9 +238,14 @@ class _TraceIDScreenState extends State<TraceIDScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    _traceIdController.dispose();
-    super.dispose();
+  Widget _buildArrow(bool pointsRight) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Icon(
+        pointsRight ? Icons.arrow_forward : Icons.arrow_back,
+        color: AppTheme.primaryGreen,
+        size: 30,
+      ),
+    );
   }
 }

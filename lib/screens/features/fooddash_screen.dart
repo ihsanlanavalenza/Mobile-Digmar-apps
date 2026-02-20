@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/custom_3d_button.dart';
 
-class FoodDashScreen extends StatelessWidget {
+class FoodDashScreen extends StatefulWidget {
   const FoodDashScreen({super.key});
+
+  @override
+  State<FoodDashScreen> createState() => _FoodDashScreenState();
+}
+
+class _FoodDashScreenState extends State<FoodDashScreen> {
+  final _searchController = TextEditingController(text: 'Cari Komoditas');
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,290 +25,240 @@ class FoodDashScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Header SVG
+          // Header Image
           SizedBox(
             width: double.infinity,
-            height: 120,
-            child: Stack(
-              children: [
-                Image.asset(
-                  'assets/images/Header Aplikasi.png',
-                  fit: BoxFit.fill,
-                ),
-                Positioned(
-                  left: 8,
-                  top: 50,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Header Aplikasi.png',
+              fit: BoxFit.fitWidth,
+              errorBuilder: (context, error, stackTrace) =>
+                  Container(height: 120, color: AppTheme.primaryGreen),
             ),
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'FoodDash',
-                      style: AppTheme.heading1.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+
+                  // Title
+                  Text(
+                    'FOODASH',
+                    style: AppTheme.heading2.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Dashboard Ketahanan Pangan',
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                  ),
 
-                    // Summary Cards
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSummaryCard(
-                            'Stok Tersedia',
-                            '145 Ton',
-                            Icons.inventory,
-                            AppTheme.primaryGreen,
-                            '+12%',
-                            true,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildSummaryCard(
-                            'Konsumsi',
-                            '98 Ton',
-                            Icons.shopping_basket,
-                            Colors.orange,
-                            '-5%',
-                            false,
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 16),
 
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSummaryCard(
-                            'Harga Rata-rata',
-                            'Rp 8.500',
-                            Icons.attach_money,
-                            AppTheme.accentGreen,
-                            '+2%',
-                            true,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildSummaryCard(
-                            'Distribusi',
-                            '87%',
-                            Icons.local_shipping,
-                            Colors.blue,
-                            '+8%',
-                            true,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Distribution Chart
-                    Text(
-                      'Distribusi Pangan per Wilayah',
-                      style: AppTheme.heading2.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    Container(
-                      height: 250,
-                      padding: const EdgeInsets.all(16),
+                  // Search Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.shade100,
-                            blurRadius: 4,
+                            color: Colors.grey.withValues(alpha: 0.15),
+                            blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                      child: BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey.shade600,
+                          ),
+                          suffixIcon: Icon(
+                            Icons.close,
+                            color: Colors.grey.shade400,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Tomato Image
+                  Image.asset(
+                    'assets/images/assets-pageapps/Tomat apel.png',
+                    height: 80,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => SizedBox(
+                      height: 80,
+                      child: Icon(
+                        Icons.local_florist,
+                        size: 50,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Dashboard Button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Custom3DButton(
+                        label: 'DASHBOARD INFORMASI',
+                        onTap: () {},
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Stats Grid
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildStatItem('Harga:', 'Rp 45.000 / Kg'),
+                              const SizedBox(height: 12),
+                              _buildStatItem('Distribusi:', 'Tinggi'),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildStatItem('Kebutuhan Mitra:', '1200 Kg'),
+                              const SizedBox(height: 12),
+                              _buildStatItem('Kerawanan:', 'Rendah'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Chart
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      height: 160,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: LineChart(
+                        LineChartData(
                           gridData: FlGridData(show: false),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 40,
-                                getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    '${value.toInt()}T',
-                                    style: AppTheme.bodySmall,
+                          titlesData: FlTitlesData(show: false),
+                          borderData: FlBorderData(show: false),
+                          minX: 0,
+                          maxX: 6,
+                          minY: 0,
+                          maxY: 6,
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: [
+                                FlSpot(0, 1.5),
+                                FlSpot(1, 2),
+                                FlSpot(2, 2.5),
+                                FlSpot(3, 3.5),
+                                FlSpot(4, 4),
+                                FlSpot(5, 4.5),
+                                FlSpot(6, 5.5),
+                              ],
+                              isCurved: true,
+                              color: AppTheme.primaryGreen,
+                              barWidth: 3,
+                              dotData: FlDotData(
+                                show: true,
+                                getDotPainter: (spot, percent, barData, index) {
+                                  return FlDotCirclePainter(
+                                    radius: 6,
+                                    color: Colors.white,
+                                    strokeWidth: 3,
+                                    strokeColor: AppTheme.primaryGreen,
                                   );
                                 },
                               ),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  const regions = [
-                                    'Utara',
-                                    'Selatan',
-                                    'Timur',
-                                    'Barat',
-                                  ];
-                                  if (value.toInt() >= 0 &&
-                                      value.toInt() < regions.length) {
-                                    return Text(
-                                      regions[value.toInt()],
-                                      style: AppTheme.bodySmall,
-                                    );
-                                  }
-                                  return const Text('');
-                                },
+                              belowBarData: BarAreaData(
+                                show: true,
+                                color: AppTheme.primaryGreen.withValues(
+                                  alpha: 0.1,
+                                ),
                               ),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          borderData: FlBorderData(show: false),
-                          barGroups: [
-                            BarChartGroupData(
-                              x: 0,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: 35,
-                                  color: AppTheme.primaryGreen,
-                                  width: 30,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            BarChartGroupData(
-                              x: 1,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: 42,
-                                  color: AppTheme.accentGreen,
-                                  width: 30,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            BarChartGroupData(
-                              x: 2,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: 28,
-                                  color: AppTheme.lightGreen,
-                                  width: 30,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            BarChartGroupData(
-                              x: 3,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: 38,
-                                  color: AppTheme.primaryGreen,
-                                  width: 30,
-                                  borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4),
-                                  ),
-                                ),
-                              ],
                             ),
                           ],
                         ),
                       ),
                     ),
+                  ),
 
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                    // Food Items List
-                    Text(
-                      'Status Komoditas',
-                      style: AppTheme.heading2.copyWith(
-                        color: AppTheme.primaryGreen,
-                      ),
+                  // Navigation Buttons
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Kembali Keberanda',
+                            onTap: () => Navigator.pop(context),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Custom3DButton(
+                            label: 'Lihat Kebutuhan',
+                            onTap: () {},
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
+                  ),
 
-                    _buildFoodItemCard(
-                      'Beras',
-                      '45 Ton',
-                      'Stok Aman',
-                      Icons.rice_bowl,
-                      AppTheme.primaryGreen,
-                    ),
-                    _buildFoodItemCard(
-                      'Jagung',
-                      '32 Ton',
-                      'Stok Aman',
-                      Icons.grass,
-                      AppTheme.primaryGreen,
-                    ),
-                    _buildFoodItemCard(
-                      'Kedelai',
-                      '18 Ton',
-                      'Stok Menipis',
-                      Icons.local_florist,
-                      Colors.orange,
-                    ),
-                    _buildFoodItemCard(
-                      'Cabai',
-                      '8 Ton',
-                      'Perlu Tambahan',
-                      Icons.local_fire_department,
-                      Colors.red,
-                    ),
-
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
 
-          // Footer SVG
+          // Footer Image
           SizedBox(
             width: double.infinity,
-            height: 120,
             child: Image.asset(
               'assets/images/Buttom page.png',
               fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
+              errorBuilder: (context, error, stackTrace) => SizedBox(
+                height: 100,
+                child: ColoredBox(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                ),
+              ),
             ),
           ),
         ],
@@ -302,142 +266,24 @@ class FoodDashScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-    String percentage,
-    bool isPositive,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+  Widget _buildStatItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTheme.bodySmall.copyWith(
+            color: AppTheme.textSecondaryColor,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isPositive
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  percentage,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: isPositive ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+        ),
+        Text(
+          value,
+          style: AppTheme.bodyMedium.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimaryColor,
           ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: AppTheme.heading2.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            style: AppTheme.bodySmall.copyWith(
-              color: AppTheme.textSecondaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFoodItemCard(
-    String name,
-    String stock,
-    String status,
-    IconData icon,
-    Color statusColor,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: statusColor, size: 28),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: AppTheme.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  stock,
-                  style: AppTheme.bodySmall.copyWith(
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              status,
-              style: AppTheme.bodySmall.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

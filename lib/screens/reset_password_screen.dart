@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_3d_button.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
@@ -139,12 +140,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const SizedBox(height: 30),
 
                     // Send OTP Button
-                    ElevatedButton(
-                      onPressed: _sendOTP,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Text('KIRIM KODE OTP'),
+                    Custom3DButton(
+                      label: 'KIRIM KODE OTP',
+                      onTap: _sendOTP,
+                      width: double.infinity,
                     ),
                   ],
 
@@ -231,12 +230,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const SizedBox(height: 30),
 
                     // Reset Button
-                    ElevatedButton(
-                      onPressed: _resetPassword,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Text('RESET PASSWORD'),
+                    Custom3DButton(
+                      label: 'RESET PASSWORD',
+                      onTap: _resetPassword,
+                      width: double.infinity,
                     ),
                   ],
 

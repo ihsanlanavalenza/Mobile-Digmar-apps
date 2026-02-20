@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_3d_button.dart';
 import 'register_screen.dart';
 import 'reset_password_screen.dart';
 
@@ -171,12 +172,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24),
 
                   // Login Button
-                  ElevatedButton(
-                    onPressed: _handleLogin,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text('MASUK'),
+                  Custom3DButton(
+                    label: 'MASUK',
+                    onTap: _handleLogin,
+                    width: double.infinity,
                   ),
 
                   const SizedBox(height: 20),
