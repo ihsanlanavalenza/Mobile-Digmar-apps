@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_3d_button.dart';
+import '../../services/dummy_data_service.dart';
+import '../../models/trace_record.dart';
+import 'trace_detail_screen.dart';
 
 class TraceIDScreen extends StatefulWidget {
   const TraceIDScreen({super.key});
@@ -95,69 +98,32 @@ class _TraceIDScreenState extends State<TraceIDScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Hero Image - Farmer
-                  Container(
-                    height: 120,
-                    width: 160,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.grey.shade100,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        'assets/images/assets-pageapps/Tomat apel.png',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                          Icons.person,
-                          size: 60,
-                          color: AppTheme.primaryGreen,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Flowchart
+                  // Riwayat Pelacakan Section
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Row 1: Petani -> Panen
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildFlowBox('PETANI', Icons.agriculture),
-                            _buildArrow(true),
-                            _buildFlowBox('PANEN', Icons.grass),
-                          ],
-                        ),
-
-                        // Down Arrow
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(width: 150),
-                              Icon(
-                                Icons.arrow_downward,
-                                color: AppTheme.primaryGreen,
-                                size: 30,
-                              ),
-                            ],
+                        Text(
+                          'RIWAYAT PELACAKAN',
+                          style: AppTheme.heading3.copyWith(
+                            color: AppTheme.textPrimaryColor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-
-                        // Row 2: Distribusi <- Penyimpanan
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildFlowBox('DISTRIBUSI', Icons.local_shipping),
-                            _buildArrow(false),
-                            _buildFlowBox('PENYIMPANAN', Icons.warehouse),
-                          ],
+                        const SizedBox(height: 12),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: DummyDataService.traces.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            return _buildTraceCard(
+                              context,
+                              DummyDataService.traces[index],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -212,39 +178,90 @@ class _TraceIDScreenState extends State<TraceIDScreen> {
     );
   }
 
-  Widget _buildFlowBox(String label, IconData icon) {
-    return Container(
-      width: 120,
-      height: 80,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryGreen,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Colors.white, size: 28),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+  Widget _buildTraceCard(BuildContext context, TraceRecord trace) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TraceDetailScreen(record: trace),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildArrow(bool pointsRight) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Icon(
-        pointsRight ? Icons.arrow_forward : Icons.arrow_back,
-        color: AppTheme.primaryGreen,
-        size: 30,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.qr_code_scanner,
+                color: AppTheme.primaryGreen,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    trace.batchId,
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    trace.commodityName,
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        color: AppTheme.primaryGreen,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          trace.currentStatus,
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.primaryGreen,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }

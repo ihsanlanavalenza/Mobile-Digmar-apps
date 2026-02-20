@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_3d_button.dart';
+import '../../services/dummy_data_service.dart';
+import '../../models/commodity.dart';
+import '../../models/prediction_data.dart';
+import 'dashboard_detail_screen.dart';
 
 class FoodDashScreen extends StatefulWidget {
   const FoodDashScreen({super.key});
@@ -11,7 +15,19 @@ class FoodDashScreen extends StatefulWidget {
 }
 
 class _FoodDashScreenState extends State<FoodDashScreen> {
-  final _searchController = TextEditingController(text: 'Cari Komoditas');
+  final _searchController = TextEditingController();
+  String _selectedCommodityId = DummyDataService.commodities.first.id;
+
+  Commodity get _selectedCommodity => DummyDataService.commodities.firstWhere(
+    (c) => c.id == _selectedCommodityId,
+    orElse: () => DummyDataService.commodities.first,
+  );
+
+  DashboardData get _selectedDashboard =>
+      DummyDataService.dashboards.firstWhere(
+        (d) => d.commodityId == _selectedCommodityId,
+        orElse: () => DummyDataService.dashboards.first,
+      );
 
   @override
   void dispose() {
@@ -54,62 +70,86 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Search Bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.search,
-                            color: Colors.grey.shade600,
-                          ),
-                          suffixIcon: Icon(
-                            Icons.close,
-                            color: Colors.grey.shade400,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 14,
-                          ),
+                  Text(
+                    'Pilih Komoditas:',
+                    style: AppTheme.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
+                      ],
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        value: _selectedCommodityId,
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: AppTheme.primaryGreen,
+                        ),
+                        items: DummyDataService.commodities.map((c) {
+                          return DropdownMenuItem<String>(
+                            value: c.id,
+                            child: Text(
+                              c.name,
+                              style: AppTheme.bodyLarge.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedCommodityId = newValue;
+                              _searchController.text = _selectedCommodity.name;
+                            });
+                          }
+                        },
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Tomato Image
-                  Image.asset(
-                    'assets/images/assets-pageapps/Tomat apel.png',
-                    height: 80,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => SizedBox(
-                      height: 80,
-                      child: Icon(
-                        Icons.local_florist,
-                        size: 50,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
+                  // Commodity Image/Icon
+                  _selectedCommodity.imagePath.isNotEmpty
+                      ? Image.asset(
+                          _selectedCommodity.imagePath,
+                          height: 80,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              SizedBox(
+                                height: 80,
+                                child: Icon(
+                                  _selectedCommodity.icon ??
+                                      Icons.local_florist,
+                                  size: 50,
+                                  color: Colors.red,
+                                ),
+                              ),
+                        )
+                      : SizedBox(
+                          height: 80,
+                          child: Icon(
+                            _selectedCommodity.icon ?? Icons.local_florist,
+                            size: 50,
+                            color: Colors.red,
+                          ),
+                        ),
 
                   const SizedBox(height: 16),
 
@@ -137,9 +177,15 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildStatItem('Harga:', 'Rp 45.000 / Kg'),
+                              _buildStatItem(
+                                'Harga:',
+                                'Rp ${_selectedCommodity.pricePerKg.toStringAsFixed(0)} / Kg',
+                              ),
                               const SizedBox(height: 12),
-                              _buildStatItem('Distribusi:', 'Tinggi'),
+                              _buildStatItem(
+                                'Distribusi:',
+                                '${_selectedDashboard.distributionLevel}/10',
+                              ),
                             ],
                           ),
                         ),
@@ -147,9 +193,15 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              _buildStatItem('Kebutuhan Mitra:', '1200 Kg'),
+                              _buildStatItem(
+                                'Kebutuhan Mitra:',
+                                '${_selectedDashboard.mitraNeedKg} Kg',
+                              ),
                               const SizedBox(height: 12),
-                              _buildStatItem('Kerawanan:', 'Rendah'),
+                              _buildStatItem(
+                                'Kerawanan:',
+                                _selectedDashboard.vulnerability,
+                              ),
                             ],
                           ),
                         ),
@@ -177,19 +229,11 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
                           borderData: FlBorderData(show: false),
                           minX: 0,
                           maxX: 6,
-                          minY: 0,
-                          maxY: 6,
+                          minY: _getMinY(),
+                          maxY: _getMaxY(),
                           lineBarsData: [
                             LineChartBarData(
-                              spots: [
-                                FlSpot(0, 1.5),
-                                FlSpot(1, 2),
-                                FlSpot(2, 2.5),
-                                FlSpot(3, 3.5),
-                                FlSpot(4, 4),
-                                FlSpot(5, 4.5),
-                                FlSpot(6, 5.5),
-                              ],
+                              spots: _getSupplySpots(),
                               isCurved: true,
                               color: AppTheme.primaryGreen,
                               barWidth: 3,
@@ -234,7 +278,16 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
                         Expanded(
                           child: Custom3DButton(
                             label: 'Lihat Kebutuhan',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DashboardDetailScreen(
+                                    dashboardData: _selectedDashboard,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -285,5 +338,23 @@ class _FoodDashScreenState extends State<FoodDashScreen> {
         ),
       ],
     );
+  }
+
+  List<FlSpot> _getSupplySpots() {
+    final supply = _selectedDashboard.weeklySupply;
+    return List.generate(
+      supply.length,
+      (index) => FlSpot(index.toDouble(), supply[index]),
+    );
+  }
+
+  double _getMinY() {
+    final min = _selectedDashboard.weeklySupply.reduce((a, b) => a < b ? a : b);
+    return min * 0.8;
+  }
+
+  double _getMaxY() {
+    final max = _selectedDashboard.weeklySupply.reduce((a, b) => a > b ? a : b);
+    return max * 1.2;
   }
 }

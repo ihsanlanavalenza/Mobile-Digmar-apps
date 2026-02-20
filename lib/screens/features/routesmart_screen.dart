@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_3d_button.dart';
+import '../../services/dummy_data_service.dart';
+import '../../models/delivery_route.dart';
+import 'route_detail_screen.dart';
+import 'schedule_screen.dart';
+import 'manage_route_screen.dart';
 
 class RouteSmartScreen extends StatefulWidget {
   const RouteSmartScreen({super.key});
@@ -117,11 +122,34 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       children: [
-                        _buildActionButton('Lihat Jadwal Hari ini'),
+                        _buildActionButton('Lihat Jadwal Hari ini', () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ScheduleScreen(),
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 12),
-                        _buildActionButton('Rute Jarak'),
+                        _buildActionButton('Rute Jarak', () {
+                          // Could just show a snackbar or navigate if a map screen exists
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Menampilkan rute jarak di peta...',
+                              ),
+                            ),
+                          );
+                        }),
                         const SizedBox(height: 12),
-                        _buildActionButton('Atur Rute Pengiriman'),
+                        _buildActionButton('Atur Rute Pengiriman', () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ManageRouteScreen(),
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -158,58 +186,18 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Mitra MBG 1',
-                                    style: AppTheme.bodySmall,
-                                  ),
-                                  Text(
-                                    'Jenis Komoditas',
-                                    style: AppTheme.bodySmall,
-                                  ),
-                                  Text(
-                                    'Kapasitas Pesanan',
-                                    style: AppTheme.bodySmall,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'SD Negeri 01 Cendana',
-                                    style: AppTheme.bodySmall.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Semangka',
-                                    style: AppTheme.bodySmall.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    '10000 Kg',
-                                    style: AppTheme.bodySmall.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: DummyDataService.routes.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 16),
+                          itemBuilder: (context, index) {
+                            return _buildRouteCard(
+                              context,
+                              DummyDataService.routes[index],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -279,10 +267,10 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
     );
   }
 
-  Widget _buildActionButton(String label) {
+  Widget _buildActionButton(String label, VoidCallback onTap) {
     return SizedBox(
       width: double.infinity,
-      child: Custom3DButton(label: label, onTap: () {}, width: double.infinity),
+      child: Custom3DButton(label: label, onTap: onTap, width: double.infinity),
     );
   }
 
@@ -297,6 +285,113 @@ class _RouteSmartScreenState extends State<RouteSmartScreen> {
           style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
+    );
+  }
+
+  Widget _buildRouteCard(BuildContext context, DeliveryRoute route) {
+    Color statusColor = route.status == 'Terkirim'
+        ? AppTheme.primaryGreen
+        : route.status == 'Dalam Perjalanan'
+        ? Colors.orange
+        : Colors.grey;
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RouteDetailScreen(route: route),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    route.status,
+                    style: AppTheme.bodySmall.copyWith(
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  route.truckId,
+                  style: AppTheme.bodySmall.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.location_on, color: AppTheme.primaryGreen, size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    route.destination,
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const SizedBox(width: 28),
+                Text(
+                  'ETA: ${route.estimatedArrival}',
+                  style: AppTheme.bodySmall.copyWith(
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: route.progress,
+                backgroundColor: Colors.grey.shade200,
+                color: statusColor,
+                minHeight: 6,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

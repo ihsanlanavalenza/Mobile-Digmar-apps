@@ -351,7 +351,7 @@ class _AgriMapScreenState extends State<AgriMapScreen> {
       children: [
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.digmarapps',
+          userAgentPackageName: 'com.ihsan.digmarapps',
         ),
         MarkerLayer(
           markers: DummyDataService.mitraLocations.map((mitra) {

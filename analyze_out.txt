@@ -1,0 +1,36 @@
+Analyzing digmarapps...                                         
+
+  error • Target of URI doesn't exist: 'product_detail_screen.dart' • lib/screens/features/digimarket_screen.dart:7:8 • uri_does_not_exist
+  error • Too many positional arguments: 0 expected, but 7 found • lib/screens/features/digimarket_screen.dart:234:19 • extra_positional_arguments_could_be_named
+  error • Expected to find ')' • lib/screens/features/digimarket_screen.dart:318:17 • expected_token
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:320:13 • expected_token
+warning • Dead code • lib/screens/features/digimarket_screen.dart:320:14 • dead_code
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:320:14 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:320:14 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:320:14 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:321:11 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:321:11 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:321:11 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:321:12 • missing_identifier
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:321:12 • unexpected_token
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:336:11 • expected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:336:12 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:336:12 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:336:12 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:337:9 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:337:9 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:337:9 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:337:10 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:337:10 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:337:10 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:338:7 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:338:7 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:338:7 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:338:8 • missing_identifier
+  error • Expected to find ';' • lib/screens/features/digimarket_screen.dart:338:8 • expected_token
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:338:8 • unexpected_token
+  error • Expected an identifier • lib/screens/features/digimarket_screen.dart:339:5 • missing_identifier
+  error • Unexpected text ';' • lib/screens/features/digimarket_screen.dart:339:5 • unexpected_token
+   info • Unnecessary empty statement • lib/screens/features/digimarket_screen.dart:339:6 • empty_statements
+  error • The method 'ProductDetailScreen' isn't defined for the type '_DigiMarketScreenState' • lib/screens/features/digimarket_screen.dart:368:35 • undefined_method
+

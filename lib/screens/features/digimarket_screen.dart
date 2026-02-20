@@ -3,6 +3,8 @@ import '../../theme/app_theme.dart';
 import '../../widgets/custom_3d_button.dart';
 import '../../services/dummy_data_service.dart';
 import '../../models/commodity.dart';
+import '../../models/market_product.dart';
+import 'product_detail_screen.dart';
 
 class DigiMarketScreen extends StatefulWidget {
   const DigiMarketScreen({super.key});
@@ -19,6 +21,10 @@ class _DigiMarketScreenState extends State<DigiMarketScreen> {
     (c) => c.id == _selectedCommodityId,
     orElse: () => DummyDataService.commodities.first,
   );
+
+  List<MarketProduct> get _filteredProducts => DummyDataService.products
+      .where((p) => p.commodityId == _selectedCommodityId)
+      .toList();
 
   @override
   void dispose() {
@@ -224,6 +230,50 @@ class _DigiMarketScreenState extends State<DigiMarketScreen> {
 
                   const SizedBox(height: 24),
 
+                  // Daftar Produk Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DAFTAR PRODUK',
+                          style: AppTheme.heading3.copyWith(
+                            color: AppTheme.textPrimaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        if (_filteredProducts.isEmpty)
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Text(
+                                'Belum ada produk untuk komoditas ini.',
+                                style: AppTheme.bodyMedium.copyWith(
+                                  color: AppTheme.textSecondaryColor,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _filteredProducts.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final product = _filteredProducts[index];
+                              return _buildProductCard(context, product);
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
                   // Navigation Buttons
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -303,6 +353,99 @@ class _DigiMarketScreenState extends State<DigiMarketScreen> {
           style: AppTheme.bodyMedium.copyWith(fontWeight: FontWeight.w600),
         ),
       ],
+    );
+  }
+
+  Widget _buildProductCard(BuildContext context, MarketProduct product) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetailScreen(product: product),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.green.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 70,
+                height: 70,
+                color: Colors.green.shade50,
+                child: Image.asset(
+                  product.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.shopping_bag, color: Colors.green),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: AppTheme.bodyLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimaryColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Rp ${product.price.toStringAsFixed(0)} / ${product.unit}',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${product.rating}',
+                        style: AppTheme.bodySmall.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '• ${product.stock} ${product.unit} Tersedia',
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.chevron_right, color: Colors.grey.shade400),
+          ],
+        ),
+      ),
     );
   }
 }

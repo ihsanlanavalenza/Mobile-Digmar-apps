@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../models/commodity.dart';
 import '../models/learning_module.dart';
 import '../models/mitra_location.dart';
+import '../models/prediction_data.dart';
+import '../models/market_product.dart';
+import '../models/delivery_route.dart';
+import '../models/trace_record.dart';
 
 class DummyDataService {
   // ==================== KOMODITAS ====================
@@ -454,6 +458,282 @@ class DummyDataService {
       phone: '+62 856-1122-3344',
       imagePath: 'assets/images/assets-pageapps/Tomat apel.png',
       rating: 4.9,
+    ),
+  ];
+
+  // ==================== PREDICTION & DASHBOARD DATA ====================
+  // AgriPredict dummy data
+  static const List<PredictionData> predictions = [
+    PredictionData(
+      id: 'p-tomat-apel',
+      commodityId: 'tomat-apel',
+      priceHistory: [10000, 11000, 10500, 11500, 12000, 12000], // Last 6 months
+      pricePrediction: [
+        12500,
+        13000,
+        13500,
+        14000,
+        14500,
+        14500,
+      ], // Next 6 months
+      demandTrend: 'Naik',
+      targetMarket: 'Supermarket & Ekspor',
+      confidenceScore: 0.85,
+      recommendation: 'Perbanyak panen di bulan depan untuk harga optimal.',
+    ),
+    PredictionData(
+      id: 'p-jagung',
+      commodityId: 'jagung',
+      priceHistory: [4500, 4800, 5000, 4900, 5000, 5000],
+      pricePrediction: [5200, 5300, 5100, 5000, 4900, 4800],
+      demandTrend: 'Stabil',
+      targetMarket: 'Pabrik Pakan Ternak',
+      confidenceScore: 0.90,
+      recommendation: 'Tunda jual sebagian panen, simpan di silo.',
+    ),
+    PredictionData(
+      id: 'p-beras',
+      commodityId: 'beras',
+      priceHistory: [12500, 12500, 12800, 13000, 13000, 13000],
+      pricePrediction: [13000, 13000, 13200, 13500, 13500, 13500],
+      demandTrend: 'Naik (Jelang Hari Raya)',
+      targetMarket: 'Retail & Bulog',
+      confidenceScore: 0.95,
+      recommendation: 'Maksimalkan produksi untuk penuhi kuota mitras.',
+    ),
+    PredictionData(
+      id: 'p-cabai',
+      commodityId: 'cabai',
+      priceHistory: [40000, 42000, 38000, 50000, 60000, 45000],
+      pricePrediction: [45000, 40000, 35000, 30000, 35000, 48000],
+      demandTrend: 'Fluktuatif',
+      targetMarket: 'Pasar Tradisional & Industri Sambal',
+      confidenceScore: 0.70,
+      recommendation: 'Waspada panen raya bulan depan, harga berisiko turun.',
+    ),
+    PredictionData(
+      id: 'p-semangka',
+      commodityId: 'semangka',
+      priceHistory: [7000, 7500, 8000, 8500, 9000, 8000],
+      pricePrediction: [7500, 7000, 6500, 6000, 7000, 8000],
+      demandTrend: 'Musiman (Kemarau)',
+      targetMarket: 'Pasar Tradisional',
+      confidenceScore: 0.80,
+      recommendation: 'Tanam sekarang untuk panen awal kemarau depan.',
+    ),
+  ];
+
+  // FoodDash dummy data
+  static const List<DashboardData> dashboards = [
+    DashboardData(
+      id: 'd-tomat-apel',
+      commodityId: 'tomat-apel',
+      distributionLevel: 8.5,
+      mitraNeedKg: 2500,
+      vulnerability: 'Rendah',
+      weeklySupply: [1.2, 1.5, 1.8, 2.0, 2.5, 2.8, 3.0], // in tons
+    ),
+    DashboardData(
+      id: 'd-jagung',
+      commodityId: 'jagung',
+      distributionLevel: 9.0,
+      mitraNeedKg: 15000,
+      vulnerability: 'Rendah',
+      weeklySupply: [10, 12, 11, 14, 15, 14, 16],
+    ),
+    DashboardData(
+      id: 'd-beras',
+      commodityId: 'beras',
+      distributionLevel: 9.5,
+      mitraNeedKg: 50000,
+      vulnerability: 'Rendah',
+      weeklySupply: [40, 42, 45, 48, 50, 49, 52],
+    ),
+    DashboardData(
+      id: 'd-cabai',
+      commodityId: 'cabai',
+      distributionLevel: 6.0,
+      mitraNeedKg: 1200,
+      vulnerability: 'Tinggi',
+      weeklySupply: [0.5, 0.4, 0.6, 0.8, 1.0, 0.7, 0.5],
+    ),
+    DashboardData(
+      id: 'd-semangka',
+      commodityId: 'semangka',
+      distributionLevel: 7.5,
+      mitraNeedKg: 5000,
+      vulnerability: 'Sedang',
+      weeklySupply: [2, 3, 2.5, 4, 3.5, 5, 4.5],
+    ),
+  ];
+
+  // ==================== MARKET PRODUCTS ====================
+  // DigiMarket dummy data
+  static const List<MarketProduct> products = [
+    MarketProduct(
+      id: 'prod-tomat-1',
+      name: 'Tomat Apel Organik',
+      commodityId: 'tomat-apel',
+      mitraId: 'm1',
+      price: 15000,
+      unit: 'Kg',
+      stock: 50,
+      description:
+          'Tomat Apel segar pilihan langsung dari petani KUD Tani Makmur.',
+      imagePath: 'assets/images/assets-pageapps/Tomat apel.png',
+      rating: 4.8,
+      reviews: 124,
+    ),
+    MarketProduct(
+      id: 'prod-tomat-2',
+      name: 'Tomat Apel Curah',
+      commodityId: 'tomat-apel',
+      mitraId: 'm2',
+      price: 14000,
+      unit: 'Kg',
+      stock: 120,
+      description:
+          'Tomat Apel curah berkualitas untuk kebutuhan industri dan rumah makan.',
+      imagePath: 'assets/images/assets-pageapps/Tomat apel.png',
+      rating: 4.5,
+      reviews: 89,
+    ),
+    MarketProduct(
+      id: 'prod-jagung-1',
+      name: 'Jagung Manis Pilihan',
+      commodityId: 'jagung',
+      mitraId: 'm3',
+      price: 6000,
+      unit: 'Kg',
+      stock: 300,
+      description: 'Jagung manis segar baru panen dari Lereng Wilis.',
+      imagePath: 'assets/images/assets-pageapps/Jagung.png',
+      rating: 4.9,
+      reviews: 210,
+    ),
+    MarketProduct(
+      id: 'prod-beras-1',
+      name: 'Beras Premium Cianjur',
+      commodityId: 'beras',
+      mitraId: 'm1',
+      price: 13500,
+      unit: 'Kg',
+      stock: 1000,
+      description: 'Beras pulen premium asli Cianjur tanpa pemutih.',
+      imagePath: 'assets/images/assets-pageapps/beras.png',
+      rating: 5.0,
+      reviews: 540,
+    ),
+    MarketProduct(
+      id: 'prod-cabai-1',
+      name: 'Cabai Merah Keriting',
+      commodityId: 'cabai',
+      mitraId: 'm2',
+      price: 45000,
+      unit: 'Kg',
+      stock: 30,
+      description: 'Cabai merah keriting pedas kualitas super.',
+      imagePath: 'assets/images/assets-pageapps/cabe.png',
+      rating: 4.7,
+      reviews: 150,
+    ),
+    MarketProduct(
+      id: 'prod-semangka-1',
+      name: 'Semangka Inul Merah',
+      commodityId: 'semangka',
+      mitraId: 'm3',
+      price: 8000,
+      unit: 'Kg',
+      stock: 200,
+      description: 'Semangka Inul manis segar cocok untuk hidangan penutup.',
+      imagePath: 'assets/images/assets-pageapps/Semangka.png',
+      rating: 4.6,
+      reviews: 85,
+    ),
+  ];
+
+  // ==================== DELIVERY ROUTES ====================
+  // RouteSmart dummy data
+  static const List<DeliveryRoute> routes = [
+    DeliveryRoute(
+      id: 'route-001',
+      truckId: 'B 1234 CD',
+      driverName: 'Budi Santoso',
+      origin: 'KUD Tani Makmur (Wonosobo)',
+      destination: 'Pasar Induk Kramat Jati',
+      status: 'Dalam Perjalanan',
+      estimatedArrival: '14:30 WIB',
+      progress: 0.65,
+      totalStops: 3,
+      completedStops: 2,
+      currentLocation: 'Rest Area KM 207A Palikanci',
+    ),
+    DeliveryRoute(
+      id: 'route-002',
+      truckId: 'H 8899 AA',
+      driverName: 'Agus Triono',
+      origin: 'Koperasi Sejahtera (Bandungan)',
+      destination: 'Supermarket Hero Jakarta',
+      status: 'Terkirim',
+      estimatedArrival: '10:00 WIB',
+      progress: 1.0,
+      totalStops: 2,
+      completedStops: 2,
+      currentLocation: 'Supermarket Hero Jakarta',
+    ),
+    DeliveryRoute(
+      id: 'route-003',
+      truckId: 'D 4321 XY',
+      driverName: 'Dendi Pratama',
+      origin: 'Mitra Tani Maju (Garut)',
+      destination: 'Bandung Gudang Utama',
+      status: 'Persiapan',
+      estimatedArrival: 'Besok, 08:00 WIB',
+      progress: 0.1,
+      totalStops: 1,
+      completedStops: 0,
+      currentLocation: 'Gudang Garut',
+    ),
+  ];
+
+  // ==================== TRACE RECORDS ====================
+  // TraceID dummy data
+  static const List<TraceRecord> traces = [
+    TraceRecord(
+      id: 'trace-001',
+      batchId: 'B-TMT-889',
+      commodityName: 'Tomat Apel Organik',
+      farmerName: 'KUD Tani Makmur',
+      harvestDate: '12 Okt 2023',
+      farmLocation: 'Wonosobo, Jawa Tengah',
+      processingDate: '13 Okt 2023',
+      qualityGrade: 'Grade A Premium',
+      currentStatus: 'Telah didistribusikan ke Supermarket',
+      lastScanLocation: 'Pasar Induk Kramat Jati',
+    ),
+    TraceRecord(
+      id: 'trace-002',
+      batchId: 'B-JGG-442',
+      commodityName: 'Jagung Manis',
+      farmerName: 'Kelompok Tani Wilis',
+      harvestDate: '15 Okt 2023',
+      farmLocation: 'Kediri, Jawa Timur',
+      processingDate: '16 Okt 2023',
+      qualityGrade: 'Grade B Standar',
+      currentStatus: 'Dalam Proses Pengiriman',
+      lastScanLocation: 'Gudang Transit Semarang',
+    ),
+    TraceRecord(
+      id: 'trace-003',
+      batchId: 'B-BRS-101',
+      commodityName: 'Beras Pandan Wangi',
+      farmerName: 'Koperasi Dewi Sri',
+      harvestDate: '01 Sep 2023',
+      farmLocation: 'Cianjur, Jawa Barat',
+      processingDate: '05 Sep 2023',
+      qualityGrade: 'Ekspor',
+      currentStatus: 'Tiba di Gudang Retail',
+      lastScanLocation: 'Gudang Hero Supermarket',
     ),
   ];
 }
